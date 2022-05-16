@@ -5,7 +5,7 @@ use std::{
     fs::{File, OpenOptions},
     io::{LineWriter, Write},
     path::PathBuf,
-    sync::{Arc, RwLock, RwLockReadGuard},
+    sync::{Arc, RwLock, RwLockReadGuard, Mutex},
 };
 use wasi_common::{
     pipe::{ReadPipe, WritePipe},
@@ -130,9 +130,9 @@ impl Default for ModuleIoRedirectsTypes {
 /// a Wasm module is to be run.
 pub struct ModuleIoRedirects {
     /// pipes for ModuleIoRedirects
-    pub pipes: Arc<RedirectPipes>,
+    pub pipes: Arc<Mutex<Option<RedirectPipes>>>,
     /// read handles for ModuleIoRedirects
-    pub read_handles: Arc<RedirectReadHandles>,
+    pub read_handles: Arc<Mutex<Option<RedirectReadHandles>>>,
 }
 
 impl Clone for ModuleIoRedirects {
@@ -157,12 +157,12 @@ impl ModuleIoRedirects {
         let err_stdpipe: Box<dyn WasiFile> = Box::new(WritePipe::from_shared(rrh.stderr.clone()));
 
         Self {
-            pipes: Arc::new(RedirectPipes {
+            pipes: Arc::new(Mutex::new(Some(RedirectPipes {
                 stdin: in_stdpipe,
                 stdout: out_stdpipe,
                 stderr: err_stdpipe,
-            }),
-            read_handles: Arc::new(rrh),
+            }))),
+            read_handles: Arc::new(Mutex::new(Some(rrh))),
         }
     }
 
@@ -178,12 +178,12 @@ impl ModuleIoRedirects {
             Box::new(WasmtimeFile::from_cap_std(CapFile::from_std(stderr_file)));
 
         Self {
-            pipes: Arc::new(RedirectPipes {
+            pipes: Arc::new(Mutex::new(Some(RedirectPipes {
                 stdin: in_stdpipe,
                 stdout: out_stdpipe,
                 stderr: err_stdpipe,
-            }),
-            read_handles: Arc::new(rrh),
+            }))),
+            read_handles: Arc::new(Mutex::new(Some(rrh))),
         }
     }
 }

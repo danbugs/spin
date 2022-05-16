@@ -59,7 +59,7 @@ impl RedisExecutor for SpinRedisExecutor {
         };
 
         let log_result = engine.save_output_to_logs(
-            mior.unwrap().read_handles.read(),
+            mior.unwrap().clone().read_handles.lock().unwrap().take().unwrap().read(),
             component,
             true,
             true,

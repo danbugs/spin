@@ -61,7 +61,7 @@ impl HttpExecutor for SpinHttpExecutor {
             .map_err(contextualise_err);
 
         let log_result =
-            engine.save_output_to_logs(mior.unwrap().read_handles.read(), component, true, true);
+            engine.save_output_to_logs(mior.unwrap().clone().read_handles.lock().unwrap().take().unwrap().read(), component, true, true);
 
         // Defer checking for failures until here so that the logging runs
         // even if the guest code fails. (And when checking, check the guest
