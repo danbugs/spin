@@ -5,7 +5,7 @@ use std::{
     fs::{File, OpenOptions},
     io::{LineWriter, Write},
     path::PathBuf,
-    sync::{Arc, Mutex, RwLock, RwLockReadGuard},
+    sync::{Arc, RwLock, RwLockReadGuard},
 };
 use wasi_common::{
     pipe::{ReadPipe, WritePipe},
@@ -130,18 +130,9 @@ impl Default for ModuleIoRedirectsTypes {
 /// a Wasm module is to be run.
 pub struct ModuleIoRedirects {
     /// pipes for ModuleIoRedirects
-    pub pipes: Arc<Mutex<Option<RedirectPipes>>>,
+    pub pipes: Option<RedirectPipes>,
     /// read handles for ModuleIoRedirects
-    pub read_handles: Arc<Mutex<Option<RedirectReadHandles>>>,
-}
-
-impl Clone for ModuleIoRedirects {
-    fn clone(&self) -> Self {
-        Self {
-            pipes: Arc::clone(&self.pipes),
-            read_handles: Arc::clone(&self.read_handles),
-        }
-    }
+    pub read_handles: Option<RedirectReadHandles>,
 }
 
 impl Default for ModuleIoRedirects {
@@ -160,12 +151,12 @@ impl ModuleIoRedirects {
         let err_stdpipe: Box<dyn WasiFile> = Box::new(WritePipe::from_shared(rrh.stderr.clone()));
 
         Self {
-            pipes: Arc::new(Mutex::new(Some(RedirectPipes {
+            pipes: Some(RedirectPipes {
                 stdin: in_stdpipe,
                 stdout: out_stdpipe,
                 stderr: err_stdpipe,
-            }))),
-            read_handles: Arc::new(Mutex::new(Some(rrh))),
+            }),
+            read_handles: Some(rrh),
         }
     }
 
@@ -181,12 +172,12 @@ impl ModuleIoRedirects {
             Box::new(WasmtimeFile::from_cap_std(CapFile::from_std(stderr_file)));
 
         Self {
-            pipes: Arc::new(Mutex::new(Some(RedirectPipes {
+            pipes: Some(RedirectPipes {
                 stdin: in_stdpipe,
                 stdout: out_stdpipe,
                 stderr: err_stdpipe,
-            }))),
-            read_handles: Arc::new(Mutex::new(Some(rrh))),
+            }),
+            read_handles: Some(rrh),
         }
     }
 }
@@ -196,12 +187,6 @@ pub struct RedirectPipes {
     pub(crate) stdin: Box<dyn WasiFile>,
     pub(crate) stdout: Box<dyn WasiFile>,
     pub(crate) stderr: Box<dyn WasiFile>,
-}
-
-impl Debug for RedirectPipes {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("RedirectPipes {}").finish()
-    }
 }
 
 impl RedirectPipes {

@@ -9,7 +9,7 @@ use spin_manifest::WagiConfig;
 use std::{
     collections::HashMap,
     net::SocketAddr,
-    sync::{Arc, Mutex, RwLock, RwLockReadGuard},
+    sync::{Arc, RwLock, RwLockReadGuard},
 };
 use tokio::task::spawn_blocking;
 use tracing::log;
@@ -89,7 +89,7 @@ impl HttpExecutor for WagiHttpExecutor {
         let (mut store, instance) = engine.prepare_component(
             component,
             None,
-            Some(Arc::new(Mutex::new(Some(redirects)))),
+            Some(redirects),
             Some(headers),
             Some(argv.split(' ').map(|s| s.to_owned()).collect()),
         )?;

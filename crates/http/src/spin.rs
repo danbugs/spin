@@ -48,8 +48,8 @@ impl HttpExecutor for SpinHttpExecutor {
         let (store, instance) = engine.prepare_component(
             component,
             None,
-            match mior.clone() {
-                Some(mr) => Some(mr.pipes),
+            match mior {
+                Some(mr) => mr.pipes,
                 None => None,
             },
             None,

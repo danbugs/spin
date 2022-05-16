@@ -39,8 +39,8 @@ impl RedisExecutor for SpinRedisExecutor {
         let (store, instance) = engine.prepare_component(
             component,
             None,
-            match mior.clone() {
-                Some(mr) => Some(mr.pipes),
+            match mior {
+                Some(mr) => mr.pipes,
                 None => None,
             },
             None,
@@ -58,20 +58,20 @@ impl RedisExecutor for SpinRedisExecutor {
             }
         };
 
-        let log_result = engine.save_output_to_logs(
-            mior.unwrap()
-                .read_handles
-                .lock()
-                .unwrap()
-                .take()
-                .unwrap()
-                .read(),
-            component,
-            true,
-            true,
-        );
+        // let log_result = engine.save_output_to_logs(
+        //     mior.unwrap()
+        //         .read_handles
+        //         .lock()
+        //         .unwrap()
+        //         .take()
+        //         .unwrap()
+        //         .read(),
+        //     component,
+        //     true,
+        //     true,
+        // );
 
-        result.and(log_result)
+        result//.and(log_result)
     }
 }
 

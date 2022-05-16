@@ -16,7 +16,7 @@ use std::{
     collections::HashMap,
     io::Write,
     path::PathBuf,
-    sync::{Arc, Mutex},
+    sync::Arc,
 };
 use tokio::{
     task::JoinHandle,
@@ -243,7 +243,7 @@ impl<T: Default> ExecutionContext<T> {
         &self,
         component: &str,
         data: Option<T>,
-        io: Option<Arc<Mutex<Option<RedirectPipes>>>>,
+        io: Option<RedirectPipes>,
         env: Option<HashMap<String, String>>,
         args: Option<Vec<String>>,
     ) -> Result<(Store<RuntimeContext<T>>, Instance)> {
@@ -319,7 +319,7 @@ impl<T: Default> ExecutionContext<T> {
         &self,
         component: &Component<T>,
         data: Option<T>,
-        io: Option<Arc<Mutex<Option<RedirectPipes>>>>,
+        io: Option<RedirectPipes>,
         env: Option<HashMap<String, String>>,
         args: Option<Vec<String>>,
     ) -> Result<Store<RuntimeContext<T>>> {
@@ -332,9 +332,9 @@ impl<T: Default> ExecutionContext<T> {
         match io {
             Some(r) => {
                 wasi_ctx = wasi_ctx
-                    .stderr(r.lock().unwrap().take().unwrap().stderr)
-                    .stdout(r.lock().unwrap().take().unwrap().stdout)
-                    .stdin(r.lock().unwrap().take().unwrap().stdin);
+                    .stderr(r.stderr)
+                    .stdout(r.stdout)
+                    .stdin(r.stdin);
             }
             None => wasi_ctx = wasi_ctx.inherit_stdio(),
         };
