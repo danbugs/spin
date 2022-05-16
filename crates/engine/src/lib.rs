@@ -262,13 +262,14 @@ impl<T: Default> ExecutionContext<T> {
     /// Save logs for a given component in the log directory on the host
     pub fn save_output_to_logs(
         &self,
-        io_redirects: impl OutputBuffers,
+        io_redirects: Option<impl OutputBuffers>,
         component: &str,
         save_stdout: bool,
         save_stderr: bool,
     ) -> Result<()> {
         let sanitized_label = sanitize(&self.config.label);
         let sanitized_component_name = sanitize(&component);
+        let ior = io_redirects.unwrap();
 
         let log_dir = match &self.config.log_dir {
             Some(l) => l.clone(),
@@ -298,7 +299,7 @@ impl<T: Default> ExecutionContext<T> {
                 .append(true)
                 .create(true)
                 .open(stdout_filename)?;
-            let contents = io_redirects.stdout();
+            let contents = ior.stdout();
             file.write_all(contents)?;
         }
 
@@ -308,7 +309,7 @@ impl<T: Default> ExecutionContext<T> {
                 .append(true)
                 .create(true)
                 .open(stderr_filename)?;
-            let contents = io_redirects.stderr();
+            let contents = ior.stderr();
             file.write_all(contents)?;
         }
 
