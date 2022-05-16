@@ -5,7 +5,7 @@ use std::{
     fs::{File, OpenOptions},
     io::{LineWriter, Write},
     path::PathBuf,
-    sync::{Arc, RwLock, RwLockReadGuard, Mutex},
+    sync::{Arc, Mutex, RwLock, RwLockReadGuard},
 };
 use wasi_common::{
     pipe::{ReadPipe, WritePipe},
@@ -137,7 +137,10 @@ pub struct ModuleIoRedirects {
 
 impl Clone for ModuleIoRedirects {
     fn clone(&self) -> Self {
-        Self { pipes: Arc::clone(&self.pipes), read_handles: Arc::clone(&self.read_handles) }
+        Self {
+            pipes: Arc::clone(&self.pipes),
+            read_handles: Arc::clone(&self.read_handles),
+        }
     }
 }
 

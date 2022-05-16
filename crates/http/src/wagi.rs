@@ -9,7 +9,7 @@ use spin_manifest::WagiConfig;
 use std::{
     collections::HashMap,
     net::SocketAddr,
-    sync::{Arc, RwLock, RwLockReadGuard, Mutex},
+    sync::{Arc, Mutex, RwLock, RwLockReadGuard},
 };
 use tokio::task::spawn_blocking;
 use tracing::log;
