@@ -78,7 +78,7 @@ impl HttpExecutor for SpinHttpExecutor {
         // result first, so that guest failures are returned in preference to
         // log failures.)
         let resp = resp_result?;
-        log_result?;
+        // log_result?;
 
         log::info!(
             "Request finished, sending response with status code {}",
