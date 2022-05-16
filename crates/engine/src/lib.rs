@@ -12,12 +12,7 @@ use host_component::{HostComponent, HostComponents, HostComponentsState};
 use io::{ModuleIoRedirectsTypes, OutputBuffers, RedirectPipes};
 use spin_config::{host_component::ComponentConfig, Resolver};
 use spin_manifest::{Application, CoreComponent, DirectoryMount, ModuleSource};
-use std::{
-    collections::HashMap,
-    io::Write,
-    path::PathBuf,
-    sync::Arc,
-};
+use std::{collections::HashMap, io::Write, path::PathBuf, sync::Arc};
 use tokio::{
     task::JoinHandle,
     time::{sleep, Duration},
@@ -332,10 +327,7 @@ impl<T: Default> ExecutionContext<T> {
             .envs(&env)?;
         match io {
             Some(r) => {
-                wasi_ctx = wasi_ctx
-                    .stderr(r.stderr)
-                    .stdout(r.stdout)
-                    .stdin(r.stdin);
+                wasi_ctx = wasi_ctx.stderr(r.stderr).stdout(r.stdout).stdin(r.stdin);
             }
             None => wasi_ctx = wasi_ctx.inherit_stdio(),
         };

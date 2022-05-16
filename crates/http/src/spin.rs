@@ -44,30 +44,20 @@ impl HttpExecutor for SpinHttpExecutor {
         } else {
             None
         };
-        
+
         let (pipes, read_handles) = match mior {
             Some(mut mr) => (mr.pipes.take(), mr.read_handles.take()),
             None => (None, None),
         };
 
-        let (store, instance) = engine.prepare_component(
-            component,
-            None,
-            pipes,
-            None,
-            None,
-        )?;
+        let (store, instance) = engine.prepare_component(component, None, pipes, None, None)?;
 
         let resp_result = Self::execute_impl(store, instance, base, raw_route, req)
             .await
             .map_err(contextualise_err);
 
-        let log_result = engine.save_output_to_logs(
-            Some(read_handles.unwrap().read()),
-            component,
-            true,
-            true,
-        );
+        let log_result =
+            engine.save_output_to_logs(Some(read_handles.unwrap().read()), component, true, true);
 
         // Defer checking for failures until here so that the logging runs
         // even if the guest code fails. (And when checking, check the guest

@@ -41,13 +41,7 @@ impl RedisExecutor for SpinRedisExecutor {
             None => (None, None),
         };
 
-        let (store, instance) = engine.prepare_component(
-            component,
-            None,
-            pipes,
-            None,
-            None,
-        )?;
+        let (store, instance) = engine.prepare_component(component, None, pipes, None, None)?;
 
         let result = match Self::execute_impl(store, instance, channel, payload.to_vec()).await {
             Ok(()) => {
@@ -60,12 +54,8 @@ impl RedisExecutor for SpinRedisExecutor {
             }
         };
 
-        let log_result = engine.save_output_to_logs(
-            Some(read_handles.unwrap().read()),
-            component,
-            true,
-            true,
-        );
+        let log_result =
+            engine.save_output_to_logs(Some(read_handles.unwrap().read()), component, true, true);
 
         result.and(log_result)
     }
