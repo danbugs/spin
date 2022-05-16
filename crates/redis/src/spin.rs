@@ -23,20 +23,18 @@ impl RedisExecutor for SpinRedisExecutor {
             component
         );
 
-        let mior: Option<ModuleIoRedirects>;
-
-        if follow {
-            mior = match engine.config.module_io_redirects.clone() {
+        let mior: Option<ModuleIoRedirects> = if follow {
+            match engine.config.module_io_redirects.clone() {
                 ModuleIoRedirectsTypes::Default => Some(ModuleIoRedirects::new()),
                 ModuleIoRedirectsTypes::FromFiles(clp) => Some(ModuleIoRedirects::new_from_files(
                     clp.stdin_pipe.0,
                     clp.stdout_pipe.0,
                     clp.stderr_pipe.0,
                 )),
-            };
+            }
         } else {
-            mior = None;
-        }
+            None
+        };
 
         let (store, instance) = engine.prepare_component(
             component,

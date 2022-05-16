@@ -141,6 +141,12 @@ impl Clone for ModuleIoRedirects {
     }
 }
 
+impl Default for ModuleIoRedirects {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ModuleIoRedirects {
     /// Constructs the ModuleIoRedirects, and RedirectReadHandles instances the default way
     pub fn new() -> Self {
@@ -215,6 +221,12 @@ impl RedirectPipes {
 pub struct RedirectReadHandles {
     stdout: Arc<RwLock<WriteDestinations>>,
     stderr: Arc<RwLock<WriteDestinations>>,
+}
+
+impl Default for RedirectReadHandles {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl RedirectReadHandles {
